@@ -77,7 +77,7 @@
 	</nav>
 
 	<!-- Let this fill the rest of the screen and handle its own scroll -->
-	<div class="grow w-full overflow-hidden">
+	<div class="grow w-full overflow-auto">
 		{@render children()}
 	</div>
 </div>

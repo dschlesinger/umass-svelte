@@ -5,12 +5,16 @@
     import Input from "$lib/components/ui/input/input.svelte";
     import Label from "$lib/components/ui/label/label.svelte";
     import { user } from "$lib/supabase/user.svelte";
+    import { joinGame } from "$lib/supabase/games.svelte";
 
     import bg from '$lib/assets/bg-continents.png'
 
-    let game_name = $derived(user.current ? `${user.current.user_metadata.full_name}'s New Adventure` : 'Not logged in')
+    let game_name = $derived(user.current ? `${user.current.user_metadata.full_name}'s Game` : 'Not logged in')
     let number_players = $state(4)
     let grain = $state(100)
+
+    let game_id = $state('')
+    let faction_id = $state('')
 
 </script>
 
@@ -44,6 +48,24 @@
                 <Separator />
             </div>
 
+            <div class='flex flex-col md:flex-row gap-4'>
+                <div class='flex gap-x-4'>
+                    <Label class='text-lg text-white' for='game_id'>Game ID</Label>
+                    <Input bind:value={game_id} class='w-80 text-center' name='game_id' />
+                </div>
+
+                <div class='flex gap-x-4'>
+                    <Label class='text-lg text-white' for='faction_id'>Faction ID</Label>
+                    <Input bind:value={faction_id} class='w-64' name='faction_id' />
+                </div>
+                <small class='text-amber-500'>For debugging</small>
+
+            </div>
+
+            <div class='w-3/5 p-2'>
+                <Separator />
+            </div>
+
             <div class='flex flex-col md:flex-row gap-4 items-center justify-center'>
                 <div>
                     <div class='flex gap-x-4 justify-center'>
@@ -54,6 +76,13 @@
                 </div>
                 <Button
                     class='bg-green-500 hover:bg-green-800'
+                    onclick={() => {
+                        joinGame(
+                            game_name,
+                            game_id,
+                            faction_id
+                        )
+                    }}
                 >
                     Start Game
                 </Button>

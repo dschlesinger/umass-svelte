@@ -2,43 +2,46 @@
 
     import Button from "$lib/components/ui/button/button.svelte";
     import Input from "$lib/components/ui/input/input.svelte";
+    import Separator from "$lib/components/ui/separator/separator.svelte";
     import { joinGame, available_games, getGames } from "$lib/supabase/games.svelte";
 
-    let game_id = $state('')
-    let faction_id = $state('')
+    let dates = $derived(available_games.current.map((g) => new Date(g.time_joined)))
 
     getGames()
 
 </script>
 
-<div class='w-full flex flex-col gap-y-2 pt-4 items-center'>
+<div class='w-full h-full flex bg-linear-310 from-blue-500 to-blue-600 via-cyan-400'>
 
-    <div class='flex gap-x-2'>
+    <div class='w-full flex justify-center'>
 
-        <Input class='max-w-48' placeholder='game id' bind:value={game_id} />
-        <Input class='max-w-48' placeholder='faction id' bind:value={faction_id} />
+        <div class='bg-slate-800 w-3/5 h-1/2 rounded-md border-none p-2 flex flex-col'>
 
-        <Button onclick={() => {
-            joinGame(
-                game_id,
-                faction_id
-            )
-        }}
-        >Add Game</Button>
-
-        <Button onclick={() => getGames()}>
-            Refresh
-        </Button>
-    </div>
-
-    <div class='w-lg grid grid-cols-5 gap-2'>
-        {#each available_games.current as ag}
-            <div class="bg-slate-950 p-2 rounded-md text-white">
-                {ag.game_id}
-                {ag.faction_id}
-                {ag.time_joined}
+            <div class='shrink-0 text-white text-center text-2xl font-bold p-2'>
+                Your Active Games
             </div>
-        {/each}
-    </div>
-</div>
 
+            <div class='grow overflow-y-scroll mt-2'>
+                <div class='grid grid-cols-3 gap-2'>
+                    {#each available_games.current as g, i}
+
+                        <div class={`${g.active ? 'bg-green-500' : 'bg-red-500'} rounded-md p-2 flex flex-col justify-center items-center`}>
+
+                            <div class='text-center'>
+                                {g.name}
+                            </div>
+                            <div class='text-center'>
+                                {dates[i].getMonth()}/{dates[i].getDate()}/{dates[i].getFullYear()}
+                            </div>
+
+                        </div>
+
+                    {/each}       
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

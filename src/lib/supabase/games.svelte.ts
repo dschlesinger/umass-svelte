@@ -1,10 +1,12 @@
 import { toast } from "@zerodevx/svelte-toast"
 import { supabase } from "./supabase"
 
-interface Game {
+export interface Game {
+    name: string
     game_id: string
     faction_id: string
     time_joined: string
+    active: boolean
 }
 
 export let available_games: { current: Game[] } = $state({ current: [] })
@@ -19,16 +21,19 @@ export async function getGames() {
 
     // assign directly to your reactive state
     available_games.current = data.map((row: any) => ({
+        name: row.name,
         game_id: row.game_id,
         faction_id: row.faction_id,
         time_joined: row.created_at,
+        active: row.active,
     }))
 }
 
-export async function joinGame(game_id: string, faction_id: string) {
+export async function joinGame(name: string, game_id: string, faction_id: string) {
     const { error } = await supabase
         .from("games")
         .insert([{
+            name: name,
             game_id: game_id,
             faction_id: faction_id
         }]) // you can pass a single object or an array of objects
@@ -45,6 +50,7 @@ export async function joinGame(game_id: string, faction_id: string) {
     }
 
     console.log("Game inserted successfully:", {
+        name: name,
         game_id: game_id,
         faction_id: faction_id
     })
