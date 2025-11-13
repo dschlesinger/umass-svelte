@@ -17,8 +17,8 @@
 			'route': '/'
 		},
 		{
-			'name': 'Create Game',
-			'route': '/create-game'
+			'name': 'New Game',
+			'route': '/new-game'
 		}
 	]
 	

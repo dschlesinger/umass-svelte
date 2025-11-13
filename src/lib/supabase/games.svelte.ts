@@ -49,6 +49,9 @@ export async function joinGame(name: string, game_id: string, faction_id: string
         throw new Error(error.message) // throws so caller can handle it
     }
 
+    // Update backend
+
+
     console.log("Game inserted successfully:", {
         name: name,
         game_id: game_id,
