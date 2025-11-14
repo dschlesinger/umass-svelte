@@ -1,14 +1,12 @@
 <script lang='ts'>
-
-    import Input from "../ui/input/input.svelte";
     import Button from "../ui/button/button.svelte";
 
     import { Textarea } from "$lib/components/ui/textarea/index.js";
+    import { sendAdvisorMessage } from "$lib/calls/sendAdvisorMessage";
 
-    interface Message {
-        role: 'player' | 'advisor'
-        message: string
-    }
+    let textareaValue = $state('')
+
+    let token_stream = $state({current: []})
 
     let messages: Message[] = $state([
         {
@@ -20,6 +18,11 @@
             'message': 'Hello World'
         },
     ])
+
+    let {
+        game_id,
+        faction_id
+    } = $props();
 
 </script>
 
@@ -40,14 +43,22 @@
                     {m.message}
                 </div>
              {/each}
+
+             {token_stream.current.join('')}
         </div>
 
         <div class='grow max-w-1/2 md:max-w-full flex flex-col items-center m-2'>
             <!-- Send Message -->
-            <Textarea class='w-9/10 text-white grow' />
+            <Textarea bind:value={textareaValue} class='w-9/10 text-white grow' />
 
             <Button
                 class='w-9/10 mt-2 bg-blue-500'
+                onclick={
+                    async () => {
+                        console.log('sent')
+                        await sendAdvisorMessage(game_id, faction_id, messages, token_stream)
+                    }
+                }
             >Send Message</Button>
         </div>
 

@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({ request }) => {
                 body: JSON.stringify({ game_id: game_id, faction_id: faction_id })
 		});
 
-        const success = await response.json();
+        const success = response.status === 200;
 
 		return new Response(
 			JSON.stringify(success),

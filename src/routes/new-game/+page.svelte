@@ -78,8 +78,10 @@
                                 grain  
                             )
 
-                            if (data === null) {
-                                toast.push('Failed to make game, make sure options are within range')
+                            console.log(data)
+
+                            if (data.game_id === undefined) {
+                                toast.push('Failed to make game, server down or make sure options are within range')
                             }
                             else {
 

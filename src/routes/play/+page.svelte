@@ -34,7 +34,7 @@
 
     </div>
 
-    <AdvisorChat />
+    <AdvisorChat game_id={data.game_id} faction_id={data.faction_id} />
 
 </div>
 
