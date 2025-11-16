@@ -11,14 +11,14 @@
     let messages: Message[] = $state([
         {
             'role': 'advisor',
-            'message': 'Hello World'
-        },
-        {
-            'role': 'player',
-            'message': 'Hello World'
-        },
+            'message': 'Hello I am your helpful advisor'
+        }
     ])
 
+    let streaming_message = $state(false);
+    let scroll_area = $state(null)
+
+    let show_down_button = $state(false)
     let {
         game_id,
         faction_id
@@ -26,42 +26,87 @@
 
 </script>
 
-<div class='w-full h-96 md:w-96 md:h-full bg-slate-800 flex flex-col'>
+<div class="w-full lg:w-96 h-80 lg:h-full bg-slate-800 flex flex-col">
 
-    <header class='p-2 text-lg text-white font-bold text-center'>
+    <header class="p-2 text-lg text-white font-bold text-center flex items-center justify-center gap-x-2">
         Advisor Chat
+        {#if show_down_button}
+            <Button
+                onclick={() => {
+                    scroll_area.scrollTop = scroll_area.scrollHeight
+                }}
+            >
+                V
+            </Button>
+        {/if}
     </header>
 
-    <div class='w-full h-full flex md:flex-col'>
+    <!-- Chat scroll area -->
+    <div 
+        bind:this={scroll_area} 
+        onscroll={() => show_down_button = scroll_area.scrollTop < -(scroll_area.clientHeight * 2)}
+        class="flex-1 overflow-y-auto flex flex-col-reverse p-2 space-y-2"
+    >
 
-        <div class='flex h-4/5 flex-col grow border-white overflow-y-scroll'>
-            <!-- Messages -->
-             {#each messages as m}
-                <div
-                    class={`w-fit m-2 p-1 text-white rounded-md ${m.role === 'advisor' ? 'bg-slate-400 self-start' : 'bg-blue-500 self-end'}`}
-                >
-                    {m.message}
-                </div>
-             {/each}
-
-             {token_stream.current.join('')}
-        </div>
-
-        <div class='grow max-w-1/2 md:max-w-full flex flex-col items-center m-2'>
-            <!-- Send Message -->
-            <Textarea bind:value={textareaValue} class='w-9/10 text-white grow' />
-
-            <Button
-                class='w-9/10 mt-2 bg-blue-500'
-                onclick={
-                    async () => {
-                        console.log('sent')
-                        await sendAdvisorMessage(game_id, faction_id, messages, token_stream)
-                    }
-                }
-            >Send Message</Button>
-        </div>
+        <!-- Streaming message -->
+        {#if streaming_message}
+            <div
+                class="w-fit max-w-[80%] p-2 text-white rounded-md self-start bg-amber-500 wrap-break-words"
+            >
+                {token_stream.current.join("")}
+            </div>
+        {/if}
+        
+        <!-- Messages -->
+        {#each messages as m}
+            <div
+                class={`w-fit max-w-[80%] p-2 text-white rounded-md wrap-break-words ${
+                    m.role === "advisor"
+                        ? "bg-slate-400 self-start"
+                        : "bg-blue-500 self-end"
+                }`}
+            >
+                {m.message}
+            </div>
+        {/each}
 
     </div>
 
+    <!-- Input area -->
+    <div class="p-2 flex flex-col space-y-2">
+        <Textarea
+            bind:value={textareaValue}
+            class="w-full text-white min-h-[60px]"
+        />
+
+        <Button
+            class="w-full bg-blue-500"
+            onclick={async () => {
+                messages = [{
+                    role: "player",
+                    message: $state.snapshot(textareaValue),
+                }, ...messages];
+
+                textareaValue = ''
+                streaming_message = true;
+
+                await sendAdvisorMessage(
+                    game_id,
+                    faction_id,
+                    messages.toReversed(),
+                    token_stream
+                ).then(() => {
+                    messages = [{
+                        role: "advisor",
+                        message: token_stream.current.join(""),
+                    }, ...messages];
+
+                    streaming_message = false;
+                    token_stream.current = [];
+                });
+            }}
+        >
+            Send Message
+        </Button>
+    </div>
 </div>

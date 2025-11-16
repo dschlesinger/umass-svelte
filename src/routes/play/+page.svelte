@@ -27,7 +27,7 @@
 
 </script>
 
-<div class='w-full h-full flex flex-col md:flex-row'>
+<div class='w-full h-full flex flex-col lg:flex-row'>
 
     <div class='h-full grow bg-cyan-400'>
         <!-- Map -->
