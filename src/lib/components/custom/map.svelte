@@ -33,12 +33,16 @@
     let height = $state(0)
     let fullscreen = $state(false)
 
+    let fsButtonWidth = $state(0);
+
+
     // Toggles for map
     let map_config = $state({
         army: true,
         city: true,
         port: true,
-        fort: true
+        fort: true,
+        fullscreen: true,
     })
 
 </script>
@@ -50,7 +54,7 @@
     <div
         bind:clientWidth={width}
         bind:clientHeight={height}
-        class='w-9/10 h-7/10 md:w-7/10 md:h-4/5 flex flex-col md:flex-row'
+        class='w-9/10 h-7/10 md:w-7/10 md:h-4/5 flex flex-col md:flex-row gap-2'
     >
         <div
             class='w-full h-full flex items-center justify-center'
@@ -58,21 +62,33 @@
 
 
             <svg
-            width={width + 20}
-            height={height + 20}
-            class=" p-4"
+            width={width - 20}
+            height={height - 20}
+            class=""
         >
 
             <!-- 1. PROVINCES -->
             {#each game.provinces as p}
                 <polygon 
-                    points={p.border.map((b) => `${b[0] * width + 10},${b[1] * height + 10}`).join(' ')}
+                    points={p.border.map((b) => `${b[0] * (width - 20)},${b[1] * (height - 20)}`).join(' ')}
                     style={`
                         fill:${p.is_ocean ? 'cyan' : getFactionColor(p.faction_id)};
                         stroke-width: 1;
                         stroke:black;
                     `}
                 />
+                {#if fullscreen}
+                    <text
+                        x={p.centriod[0] * (width - 20)}
+                        y={p.centriod[1] * (height - 20) + 20}
+                        transform={`rotate(-45 ${p.centriod[0] * (width - 20)} ${p.centriod[1] * (height - 20)})`}
+                        class={`fill-current text-xl text-slate-800/50`}
+                        text-anchor="middle"
+                        dominant-baseline="middle"
+                    >
+                        {p?.name}
+                    </text>
+                {/if}
             {/each}
 
             {#if map_config.city}
@@ -80,11 +96,11 @@
                 <!-- 2. CITIES -->
                 {#each game.provinces as p}
                     {#if p?.city?.is_capital}
-                        <g transform="translate({p.centriod[0] * width - 8.5 + 10}, {p.centriod[1] * height - 8.5 + 10})">
+                        <g transform="translate({p.centriod[0] * (width - 20) - 8.5}, {p.centriod[1] * (height - 20) - 8.5})">
                             <Crown size={17} class="fill-amber-300" />
                         </g>
                     {:else if p?.city}
-                        <g transform="translate({p.centriod[0] * width - 8.5 + 10}, {p.centriod[1] * height - 8.5 + 10})">
+                        <g transform="translate({p.centriod[0] * (width - 20) - 8.5}, {p.centriod[1] * (height - 20) - 8.5})">
                             <Triangle size={17} class="fill-black" />
                         </g>
                     {/if}
@@ -96,8 +112,8 @@
                 
                 {#if map_config.army}
                     <foreignObject 
-                        x={p.centriod[0] * width + 10}
-                        y={p.centriod[1] * height + 10}
+                        x={p.centriod[0] * (width - 20)}
+                        y={p.centriod[1] * (height - 20)}
                         width="200"
                         height="200"
                     >
@@ -122,8 +138,8 @@
                 {/if}
                 {#if map_config.fort && p.fort}
                     <foreignObject 
-                        x={p.centriod[0] * width - 20 + 10}
-                        y={p.centriod[1] * height - 15 + 10}
+                        x={p.centriod[0] * (width - 20) - 20}
+                        y={p.centriod[1] * (height - 20) - 15}
                         width="200"
                         height="200"
                     >
@@ -139,8 +155,8 @@
                 {/if}
                 {#if map_config.port && p.port}
                     <foreignObject 
-                        x={p.centriod[0] * width - 20 + 10}
-                        y={p.centriod[1] * height + 10}
+                        x={p.centriod[0] * (width - 20) - 20}
+                        y={p.centriod[1] * (height - 20)}
                         width="200"
                         height="200"
                     >
@@ -155,20 +171,22 @@
                     </foreignObject>
                 {/if}
                 <!-- Full screen -->
-                <foreignObject 
-                        x={0}
-                        y={0}
-                        width="200"
-                        height="200"
-                    >
-                        <div xmlns="http://www.w3.org/1999/xhtml" class="">
-                            {#if !fullscreen}
-                                <Button size='icon' onclick={() => {onRequest()}}><FS size={10} /></Button>
-                            {:else}
-                                <Button size='icon' onclick={() => {onExit()}}><X size={10} /></Button>
-                            {/if}
-                        </div>
+                {#if map_config.fullscreen}
+                    <foreignObject 
+                            x={(width - 20) - 36}
+                            y={0}
+                            width="200"
+                            height="200"
+                        >
+                            <div xmlns="http://www.w3.org/1999/xhtml" class="">
+                                {#if !fullscreen}
+                                    <Button size='icon' onclick={() => {onRequest()}}><FS size={10} /></Button>
+                                {:else}
+                                    <Button size='icon' onclick={() => {onExit()}}><X size={10} /></Button>
+                                {/if}
+                            </div>
                     </foreignObject>
+                {/if}
             {/each}
                 
             </svg>
@@ -228,6 +246,18 @@
                         class='stroke-blue-800 bg-white/50 rounded p-0.5'
                     />
                     Ports
+                </Label>
+            </div>
+            <div
+                class='flex gap-x-1'
+            >
+                <Checkbox bind:checked={map_config.fullscreen} />
+                <Label>
+                    <FS
+                        size={14}
+                        class=' bg-white/50 rounded p-0.5'
+                    />
+                    Fullscreen
                 </Label>
             </div>
 

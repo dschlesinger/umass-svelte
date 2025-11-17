@@ -7,6 +7,7 @@
     import { getGameInfo } from '$lib/calls/gameInfo'
     import { onMount } from "svelte";
     import JoinGameButton from "$lib/components/custom/joinGameButton.svelte";
+    import { goto } from "$app/navigation";
 
     let sorted_game = $derived(available_games.current.toSorted((a, b) => (new Date(b.time_joined)).getTime() - new Date(a.time_joined).getTime()))
 
@@ -50,7 +51,12 @@
                 <div class='grid grid-cols-3 gap-2'>
                     {#each sorted_game as g, i}
 
-                        <div class={`${g.active ? 'bg-green-500' : 'bg-red-500'} rounded-md p-2 flex flex-col justify-center items-center`}>
+                        <Button 
+                            class={`${g.active ? 'bg-green-600 hover:bg-green-600/60' : 'bg-red-600 hover:bg-red-600/60'} h-fit rounded-md p-2 flex flex-col justify-center items-center`}
+                            onclick={() => {
+                                goto(`/play?game_id=${g.game_id}`)
+                            }}     
+                        >
 
                             <div class='text-center'>
                                 {g.name}
@@ -59,7 +65,7 @@
                                 {dates[i].getMonth()}/{dates[i].getDate()}/{dates[i].getFullYear()}
                             </div>
 
-                        </div>
+                        </Button>
 
                     {/each}       
                 </div>
