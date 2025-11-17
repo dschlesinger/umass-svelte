@@ -24,27 +24,24 @@
         <Dialog.Header>
             <Dialog.Title>Choose a Faction</Dialog.Title>
             <Dialog.Description>
-                For {game.name}
+                For {game?.name}
             </Dialog.Description>
         </Dialog.Header>
 
-        {#each game.factions.filter((f) => !f.is_taken) as f}
+        {#each game?.factions?.filter((f) => f.available) as f}
 
             <Button
                 onclick={async () => {
-                    const sucsess = await joinGameServer(game.game_id, f.faction_id)
+                    const sucsess = await joinGameServer(game?.game_id, f?.faction_id)
 
                     if (sucsess) {
 
                         // Update supabase
-                        joinGame(game.name, game.game_id, f.faction_id)
+                        joinGame(game?.name, game?.game_id, f?.faction_id)
 
-                        const params = new URLSearchParams({ 
-                            game_id: game.game_id, 
-                            faction_id: f.faction_id 
-                        });
+                        open = false;
                         
-                        goto(`/play?${params.toString()}`)
+                        goto(`/play?game_id=${encodeURI(game?.game_id)}`)
 
                     }
                     else {
@@ -52,7 +49,7 @@
                     }
                 }}
             >
-                {f.name}
+                {f?.name}
             </Button>
 
         {/each}
@@ -62,7 +59,7 @@
                 class='w-full text-center bg-slate-600 rounded-md text-white'
                 for='copy-game-id'>
                 <div class='w-full text-center'>
-                    Game ID: {game.game_id}
+                    Game ID: {game?.game_id}
                 </div>
             </Label>
             <Button
@@ -71,7 +68,7 @@
                 size='icon'
                 onclick={
                     () => {
-                        navigator.clipboard.writeText(game.game_id);
+                        navigator.clipboard.writeText(game?.game_id);
                         toast.push('Copied Game ID!')
                     }
                 }

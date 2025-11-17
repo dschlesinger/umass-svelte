@@ -20,6 +20,9 @@
     let open = $state(false);
     let game = $state(null);
 
+    // start -> map -> lore -> final
+    let game_create_step = $state({current: 'start'})
+
 </script>
 
 <div 
@@ -75,8 +78,11 @@
                                 user.current.id,
                                 game_name,
                                 number_players,
-                                grain  
+                                grain,
+                                game_create_step
                             )
+
+                            game_create_step.current = 'start';
 
                             console.log(data)
 
@@ -99,7 +105,11 @@
                         }
                     }}
                 >
-                    Start Game
+                    {#if game_create_step.current === 'start'}
+                        Start Game
+                    {:else}
+                        {game_create_step.current}
+                    {/if}
                 </Button>
             </div>
         </div>

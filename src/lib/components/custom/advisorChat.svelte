@@ -92,7 +92,7 @@
 
                 await sendAdvisorMessage(
                     game_id,
-                    faction_id,
+                    $state.snapshot(faction_id),
                     messages.toReversed(),
                     token_stream
                 ).then(() => {
