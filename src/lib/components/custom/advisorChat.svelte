@@ -93,7 +93,8 @@
                 await sendAdvisorMessage(
                     game_id,
                     $state.snapshot(faction_id),
-                    messages.toReversed(),
+                    // Take only previous 10 messages
+                    messages.toReversed().slice(0, 10),
                     token_stream
                 ).then(() => {
                     messages = [{

@@ -40,13 +40,13 @@
     let faction_order = $derived(gameState?.factions?.map((f) => f.faction_id))
 
     function getFactionColor(faction_id: string) {
-        console.log(faction_id)
+        // console.log(faction_id)
 
         const color = STRATEGY_MAP_COLORS[
             faction_order.indexOf(faction_id)
         ]
 
-        console.log(color)
+        // console.log(color)
 
         return color
     }

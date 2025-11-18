@@ -1,6 +1,8 @@
 export function attachGame(state: { messages: string[] }, game_id: string, faction_id: string) {
     if (!game_id || !faction_id) throw new Error('Game ID or Faction ID not provided');
 
+    console.log('func', game_id, faction_id)
+
     // Construct query params
     const params = new URLSearchParams({ game_id, faction_id });
     const u = `/api/attach-game?${params.toString()}`;

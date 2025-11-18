@@ -12,6 +12,8 @@ function connectBackend(game_id: string, faction_id: string) {
 
     const u = `ws://localhost:8000/ws/attach-game?${params.toString()}`;
 
+    // console.log(u)
+    
     ws = new WebSocket(u);
 
     ws.on('open', () => console.log('Connected to backend WS'));
@@ -28,12 +30,13 @@ export const GET: RequestHandler = async ({ url }) => {
     const game_id = url.searchParams.get('game_id');
     const faction_id = url.searchParams.get('faction_id');
 
+    
     if (!game_id || !faction_id) {
         throw Error('Game ID or Faction ID was not given')
     }
-
-    // console.log('server route', game_id, faction_id)
-
+    
+    console.log('server route', game_id, faction_id)
+    
 	const headers = new Headers({
 		'Content-Type': 'text/event-stream',
 		'Cache-Control': 'no-cache',
