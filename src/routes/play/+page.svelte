@@ -11,6 +11,7 @@
     import Button, {buttonVariants} from "$lib/components/ui/button/button.svelte";
     import AdvisorChat from "$lib/components/custom/advisorChat.svelte";
     import { STRATEGY_MAP_COLORS } from "$lib/components/custom/mapColors";
+    import { update_game_state } from "$lib/components/custom/processUpdate.js"
 
     import {
         Bot,
@@ -74,6 +75,17 @@
 
     })
 
+    $effect(() => {
+        if (updates.messages.length > 0) {
+            const u = updates.messages.pop();
+
+            if (gameState !== null) {
+                update_game_state(gameState, [u])
+            }
+
+        }
+    })
+
 </script>
 
 <JoinGameModal game={gameState} open={join_game_model_open} />
@@ -112,7 +124,7 @@
             
         </div>
         <!-- Map -->
-        <Map game={gameState} {sendUpdate} />
+        <Map game={gameState} {faction_id} {sendUpdate} />
     </div>
 
     <AdvisorChat game_id={data.game_id} faction_id={faction_id} />

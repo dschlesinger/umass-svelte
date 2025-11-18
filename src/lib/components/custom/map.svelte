@@ -19,6 +19,7 @@
 
     let {
         game,
+        faction_id,
         sendUpdate
     } = $props()
 
@@ -297,7 +298,7 @@
             <Button
                 class='bg-green-600'
                 onclick={() => {
-                    sendUpdate('endturn', {})
+                    sendUpdate('endturn', {}, game?.game_id, faction_id)
                 }}
             >
                 End Turn

@@ -5,7 +5,7 @@ export let user: { current: any } = $state({ current: null })
 supabase.auth.onAuthStateChange(async (event, session) => {
     if (session?.user) {
         user.current = session.user
-        console.log("Logged in:", $state.snapshot(user.current))
+        // console.log("Logged in:", $state.snapshot(user.current))
     } else {
         user.current = null
         console.log("Logged out")

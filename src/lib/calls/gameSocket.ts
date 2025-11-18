@@ -10,7 +10,9 @@ export function attachGame(state: { messages: string[] }, game_id: string, facti
     const evtSource = new EventSource(u);
 
     evtSource.onmessage = (event) => {
-        state.messages.push(event.data);
+        const d = JSON.parse(event.data)
+        console.log(d)
+        state.messages = [...state.messages, ...d.game_updates];
     };
 
     evtSource.onerror = (err) => {
@@ -21,11 +23,11 @@ export function attachGame(state: { messages: string[] }, game_id: string, facti
     return evtSource; // Return it in case caller wants to close it later
 }
 
-export async function sendUpdate(type: string, message: any) {
+export async function sendUpdate(type: string, message: any, game_id: string, faction_id: string) {
     const res = await fetch('/api/attach-game', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: type, message: message })
+        body: JSON.stringify({ type: type, message: message, game_id: game_id, faction_id: faction_id })
     });
 
     if (!res.ok) {
